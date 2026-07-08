@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium — AlloProf Admin</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+
+<div class="admin-layout">
+  <div id="sidebar-root"></div>
+
+  <div class="admin-main">
+    <div id="topbar-root"></div>
+
+    <div class="admin-content">
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">Offres Premium</div>
+          <button class="btn btn-primary" id="btn-add-plan">+ Ajouter une offre</button>
+        </div>
+        <div id="plans-wrap"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">Gestion des abonnements</div>
+          <div class="topbar__search" style="min-width:220px;">
+            🔍 <input type="text" id="searchSub" placeholder="Rechercher un abonné…">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="subsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">Demandes Premium</div>
+          <div class="topbar__search" style="min-width:220px;">
+            🔍 <input type="text" id="searchReq" placeholder="Rechercher une demande…">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Offre</th>
+                <th>Prix</th>
+                <th>Reçu</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="requestsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Ajouter / Modifier une offre -->
+<div class="modal-overlay" id="plan-modal">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__title" id="modal-title">Ajouter une offre</div>
+      <button class="modal__close" id="btn-close-modal">✕</button>
+    </div>
+    <form id="plan-form">
+      <div class="modal__body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>Nom de l'offre</label>
+            <input type="text" id="f-nom" required>
+          </div>
+          <div class="field">
+            <label>Prix (MAD)</label>
+            <input type="number" id="f-prix" min="0">
+          </div>
+          <div class="field">
+            <label>Période</label>
+            <select id="f-periode">
+              <option value="mois">Mensuel</option>
+              <option value="an">Annuel</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Ordre d'affichage</label>
+            <input type="number" id="f-ordre" min="0" value="0">
+          </div>
+          <div class="field">
+            <label class="switch">
+              <input type="checkbox" id="f-actif" checked>
+              <span class="track"></span>
+              Offre active
+            </label>
+          </div>
+          <div class="field full">
+            <label>Description</label>
+            <textarea id="f-description" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : Modifier date de fin d'abonnement -->
+<div class="modal-overlay" id="sub-modal">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal__header">
+      <div class="modal__title">Modifier la date de fin</div>
+      <button class="modal__close" id="btn-close-sub-modal">✕</button>
+    </div>
+    <form id="sub-form">
+      <div class="modal__body">
+        <div class="field full">
+          <label>Nouvelle date de fin</label>
+          <input type="date" id="f-sub-end" required>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-sub">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : Confirmation de suppression -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal__body">
+      <div class="confirm-box">
+        <div class="icon">🗑️</div>
+        <p id="confirm-message">Confirmer la suppression ?</p>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" id="confirm-no">Annuler</button>
+      <button class="btn btn-danger" id="confirm-yes">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../assets/js/admin-premium.js"></script>
+</body>
+</html>

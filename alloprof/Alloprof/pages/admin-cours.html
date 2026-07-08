@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cours — AlloProf Admin</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+
+<div class="admin-layout">
+  <div id="sidebar-root"></div>
+
+  <div class="admin-main">
+    <div id="topbar-root"></div>
+
+    <div class="admin-content">
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">Gestion des cours</div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div class="topbar__search" style="min-width:220px;">
+              🔍 <input type="text" id="searchCourse" placeholder="Rechercher un cours…">
+            </div>
+            <button class="btn btn-primary" id="btn-add-course">+ Ajouter un cours</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Matière</th>
+                <th>Niveau</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="coursesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Ajouter / Modifier un cours -->
+<div class="modal-overlay" id="course-modal">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__title" id="modal-title">Ajouter un cours</div>
+      <button class="modal__close" id="btn-close-modal">✕</button>
+    </div>
+    <form id="course-form">
+      <div class="modal__body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>Titre</label>
+            <input type="text" id="f-titre" required>
+          </div>
+          <div class="field">
+            <label>Matière</label>
+            <select id="f-matiere"></select>
+          </div>
+          <div class="field">
+            <label>Niveau</label>
+            <select id="f-niveau"></select>
+          </div>
+          <div class="field">
+            <label>Image de couverture</label>
+            <input type="file" id="f-image-file" accept="image/*">
+            <input type="hidden" id="f-image">
+            <div id="imagePreviewWrap" style="display:none;margin-top:8px;">
+              <img id="imagePreview" alt="Aperçu" style="max-width:100%;max-height:120px;border-radius:var(--radius-md);border:1px solid var(--border);">
+            </div>
+            <div id="imageUploadStatus" style="font-size:.8rem;color:var(--ink-soft);margin-top:4px;"></div>
+          </div>
+          <div class="field">
+            <label>PDF du cours</label>
+            <input type="file" id="f-pdf-file" accept=".pdf,application/pdf">
+            <input type="hidden" id="f-pdf">
+            <div id="pdfUploadStatus" style="font-size:.8rem;color:var(--ink-soft);margin-top:4px;"></div>
+          </div>
+          <div class="field">
+            <label>Vidéo YouTube (URL)</label>
+            <input type="url" id="f-youtube" placeholder="https://…">
+          </div>
+          <div class="field full">
+            <label>Description</label>
+            <textarea id="f-description" rows="4"></textarea>
+          </div>
+          <div class="field full">
+            <label class="switch">
+              <input type="checkbox" id="f-premium">
+              <span class="track"></span>
+              Cours Premium
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : Confirmation de suppression -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal__body">
+      <div class="confirm-box">
+        <div class="icon">🗑️</div>
+        <p id="confirm-message">Confirmer la suppression ?</p>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" id="confirm-no">Annuler</button>
+      <button class="btn btn-danger" id="confirm-yes">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script src="../data/data.js"></script>
+<script type="module" src="../assets/js/admin-cours.js"></script>
+</body>
+</html>
