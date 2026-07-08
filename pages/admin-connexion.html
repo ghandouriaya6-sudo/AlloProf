@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion Administrateur — AlloProf</title>
+<meta name="description" content="Accès réservé à l'équipe AlloProf.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="../assets/css/admin.css">
+<style>
+  body {
+    background: linear-gradient(160deg, var(--brand-dark), var(--brand));
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .admin-login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 36px 32px;
+  }
+  .admin-login-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .admin-login-brand .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--brand); }
+  .admin-login-tag {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    margin-bottom: 28px;
+  }
+  .admin-login-card .field { margin-bottom: 16px; }
+  .admin-login-card label { font-size: 0.82rem; font-weight: 600; color: var(--ink-soft); display:block; margin-bottom:6px; }
+  .admin-login-card input {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--paper);
+    font-size: 0.94rem;
+    color: var(--ink);
+  }
+  .admin-login-card input:focus { border-color: var(--brand); background: var(--surface); outline: none; }
+  .admin-login-error {
+    display: none;
+    background: var(--rose-soft);
+    color: var(--rose);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+  }
+  .admin-login-submit {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--brand);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: filter .15s;
+  }
+  .admin-login-submit:hover { filter: brightness(1.08); }
+  .admin-login-submit:disabled { opacity: .6; cursor: not-allowed; }
+  .admin-login-back {
+    display: block;
+    text-align: center;
+    margin-top: 22px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .admin-login-back:hover { color: var(--brand); }
+</style>
+</head>
+<body>
+
+<div class="admin-login-card fade-in">
+  <div class="admin-login-brand"><span class="dot"></span> AlloProf Admin</div>
+  <p class="admin-login-tag">Espace réservé à l'équipe pédagogique et administrative.</p>
+
+  <div class="admin-login-error" id="errorBanner"></div>
+
+  <form id="adminLoginForm" novalidate>
+    <div class="field">
+      <label for="email">Email administrateur</label>
+      <input type="email" id="email" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="admin-login-submit" id="submitBtn">Accéder à l'administration</button>
+  </form>
+
+  <a href="connexion.html" class="admin-login-back">← Retour à l'espace élève</a>
+</div>
+
+<script src="../data/data.js"></script>
+<script type="module">
+import { loginUser, getUserProfile, logoutUser, listenAuthState } from "../firebase/auth.js";
+
+const form        = document.getElementById("adminLoginForm");
+const submitBtn    = document.getElementById("submitBtn");
+const errorBanner  = document.getElementById("errorBanner");
+
+function showError(msg) {
+  errorBanner.textContent = msg;
+  errorBanner.style.display = "block";
+}
+function clearError() {
+  errorBanner.style.display = "none";
+}
+
+// Si une session admin valide existe déjà, on saute direct au dashboard admin.
+// Toute autre session (utilisateur normal) est ignorée : on n'affiche que
+// le formulaire, sans jamais rediriger un compte non-admin.
+listenAuthState(async (user) => {
+  if (!user) return;
+  const profile = await getUserProfile(user.uid);
+  if (profile?.role === "admin") {
+    window.location.href = "dashboard-admin.html";
+  }
+});
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  clearError();
+
+  const email    = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    showError("Merci de remplir l'email et le mot de passe.");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Connexion en cours…";
+
+  const { user, error } = await loginUser(email, password);
+
+  if (error) {
+    showError(error);
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Accéder à l'administration";
+    return;
+  }
+
+  const profile = await getUserProfile(user.uid);
+
+  if (profile?.role !== "admin") {
+    // Compte valide mais sans droits admin : on ferme la session
+    // pour garder l'espace admin totalement indépendant de l'espace élève.
+    await logoutUser();
+    showError("Ce compte n'a pas accès à l'administration.");
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Accéder à l'administration";
+    return;
+  }
+
+  window.location.href = "dashboard-admin.html";
+});
+</script>
+</body>
+</html>
