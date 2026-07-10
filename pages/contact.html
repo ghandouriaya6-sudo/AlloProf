@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — AlloProf</title>
+<link rel="stylesheet" href="../assets/css/variables.css">
+<link rel="stylesheet" href="../assets/css/base.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body>
+<div id="navbar-mount"></div>
+
+<main class="container section">
+   <h1 class="section-title">Contacte-nous</h1>
+  <p class="section-subtitle">Une question, une suggestion ? Notre équipe te répond rapidement.</p>
+
+  <div class="grid grid-split" style="gap:40px;">
+    <form id="contactForm" class="card card-body" novalidate>
+      <div class="form-group">
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" class="form-control" required>
+        <div class="form-error">Merci d'entrer ton nom.</div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" class="form-control" required>
+        <div class="form-error">Merci d'entrer une adresse email valide.</div>
+      </div>
+      <div class="form-group">
+        <label for="sujet">Sujet</label>
+        <select id="sujet" class="form-control">
+          <option value="Question générale">Question générale</option>
+          <option value="Support technique">Support technique</option>
+          <option value="Abonnement Premium">Abonnement Premium</option>
+          <option value="Partenariat">Partenariat</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" class="form-control" rows="5" required></textarea>
+        <div class="form-error">Merci d'écrire un message.</div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Envoyer le message</button>
+    </form>
+
+    <div class="card card-body">
+      <h3>Informations</h3>
+      <p style="margin:14px 0;color:var(--gray);">📍 Marrakech, Maroc</p>
+      <p style="margin:14px 0;color:var(--gray);">✉️ contact@alloprof.ma</p>
+      <p style="margin:14px 0;color:var(--gray);">📞 +212 5 00 00 00 00</p>
+      <p style="margin:14px 0;color:var(--gray);">🕐 Lun – Ven, 9h – 18h</p>
+    </div>
+  </div>
+</main>
+
+<div id="footer-mount"></div>
+
+<script src="../data/data.js"></script>
+<script type="module" src="../assets/js/app.js"></script>
+<script type="module">
+import { showToast, validateField } from "../assets/js/app.js";
+import { addContactMessage } from "../assets/js/firestore.js";
+
+document.getElementById("contactForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const nom = document.getElementById("nom");
+  const email = document.getElementById("email");
+  const sujet = document.getElementById("sujet");
+  const message = document.getElementById("message");
+
+  const v1 = validateField(nom, { required: true });
+  const v2 = validateField(email, { required: true, email: true });
+  const v3 = validateField(message, { required: true });
+
+  if (!v1 || !v2 || !v3) return;
+
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
+
+  try {
+    await addContactMessage({
+      nom: nom.value.trim(),
+      email: email.value.trim(),
+      sujet: sujet.value,
+      message: message.value.trim(),
+    });
+    showToast("Message envoyé avec succès !");
+    e.target.reset();
+  } catch (err) {
+    console.error(err);
+    showToast("Une erreur est survenue, réessaie plus tard.");
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
