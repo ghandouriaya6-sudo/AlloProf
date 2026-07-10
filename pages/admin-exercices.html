@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercices — AlloProf Admin</title>
+<link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+
+<div class="admin-layout">
+  <div id="sidebar-root"></div>
+
+  <div class="admin-main">
+    <div id="topbar-root"></div>
+
+    <div class="admin-content">
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="panel__title">Gestion des exercices</div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <div class="topbar__search" style="min-width:220px;">
+              🔍 <input type="text" id="searchExercise" placeholder="Rechercher un exercice…">
+            </div>
+            <button class="btn btn-primary" id="btn-add-exercise">+ Ajouter un exercice</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Titre</th>
+                <th>Matière</th>
+                <th>Niveau</th>
+                <th>Premium</th>
+                <th>Quiz</th>
+                <th>Créé le</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="exercisesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Ajouter / Modifier un exercice -->
+<div class="modal-overlay" id="exercise-modal">
+  <div class="modal">
+    <div class="modal__header">
+      <div class="modal__title" id="modal-title">Ajouter un exercice</div>
+      <button class="modal__close" id="btn-close-modal">✕</button>
+    </div>
+    <form id="exercise-form">
+      <div class="modal__body">
+        <div class="form-grid">
+          <div class="field full">
+            <label>Titre</label>
+            <input type="text" id="f-titre" required>
+          </div>
+          <div class="field">
+            <label>Matière</label>
+            <select id="f-matiere"></select>
+          </div>
+          <div class="field">
+            <label>Niveau</label>
+            <select id="f-niveau"></select>
+          </div>
+          <div class="field full">
+            <label>Description</label>
+            <textarea id="f-description" rows="3"></textarea>
+          </div>
+          <div class="field full">
+            <label>PDF de l'exercice</label>
+            <input type="file" id="f-pdf-file" accept=".pdf,application/pdf">
+            <input type="hidden" id="f-pdf">
+            <div id="pdfUploadStatus" style="font-size:.8rem;color:var(--ink-soft);margin-top:4px;"></div>
+          </div>
+          <div class="field full">
+            <label>PDF du corrigé (optionnel)</label>
+            <input type="file" id="f-correction-file" accept=".pdf,application/pdf">
+            <input type="hidden" id="f-correction">
+            <div id="correctionUploadStatus" style="font-size:.8rem;color:var(--ink-soft);margin-top:4px;"></div>
+          </div>
+          <div class="field full">
+            <label class="switch">
+              <input type="checkbox" id="f-premium">
+              <span class="track"></span>
+              Exercice Premium
+            </label>
+          </div>
+          <div class="field full">
+            <label>Quiz (QCM) — optionnel, basé sur le contenu du PDF</label>
+            <div id="questions-list"></div>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-add-question" style="margin-top:6px;">+ Ajouter une question</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel">Annuler</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal : Confirmation de suppression -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal__body">
+      <div class="confirm-box">
+        <div class="icon">🗑️</div>
+        <p id="confirm-message">Confirmer la suppression ?</p>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn-secondary" id="confirm-no">Annuler</button>
+      <button class="btn btn-danger" id="confirm-yes">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script src="../data/data.js"></script>
+<script type="module" src="../assets/js/admin-exercices.js"></script>
+</body>
+</html>
